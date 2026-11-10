@@ -1,0 +1,105 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FoodieHub{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top custom-navbar">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{% url 'home' %}"><i class="bi bi-egg-fried text-warning"></i> Foodie<span class="text-warning">Hub</span></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="nav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'menu' %}">Menu</a></li>
+                {% if user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'my_orders' %}">My Orders</a></li>
+                {% endif %}
+                {% if user.is_staff %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a></li>
+                {% endif %}
+            </ul>
+            <ul class="navbar-nav align-items-lg-center gap-lg-2">
+                <li class="nav-item me-lg-1">
+                    <a class="nav-link cart-link" href="{% url 'cart' %}" aria-label="Cart">
+                        <i class="bi bi-cart3 fs-5"></i>
+                        {% if cart_count %}<span class="cart-badge">{{ cart_count }}</span>{% endif %}
+                    </a>
+                </li>
+                {% if user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle account-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
+                        <i class="bi bi-person-circle"></i> {{ user.username }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg">
+                        <li><h6 class="dropdown-header">Account</h6></li>
+                        <li><a class="dropdown-item" href="{% url 'my_orders' %}"><i class="bi bi-receipt me-2"></i>My Orders</a></li>
+                        {% if user.is_staff %}
+                        <li><a class="dropdown-item" href="{% url 'dashboard' %}"><i class="bi bi-speedometer2 me-2"></i>Staff Dashboard</a></li>
+                        <li><a class="dropdown-item" href="/admin/"><i class="bi bi-gear me-2"></i>Admin Panel</a></li>
+                        {% endif %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item logout-link" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item ms-lg-1">
+                    <a href="{% url 'logout' %}" class="btn logout-btn" title="Logout">
+                        <i class="bi bi-box-arrow-right"></i><span class="d-lg-none ms-2">Logout</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                <li class="nav-item ms-lg-2"><a class="btn btn-warning nav-signup" href="{% url 'register' %}">Sign Up</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+{% if messages %}
+<div class="container mt-3">
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags|default:'info' }} alert-dismissible fade show shadow-sm">
+        {{ msg }}
+        <button class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<main class="min-vh-100">{% block content %}{% endblock %}</main>
+
+<footer class="footer mt-5 py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <h4 class="fw-bold">🍽️ Foodie<span class="text-warning">Hub</span></h4>
+                <p class="text-muted small">Delicious food delivered hot &amp; fresh.</p>
+            </div>
+            <div class="col-md-4">
+                <h6>Quick Links</h6>
+                <a href="{% url 'home' %}">Home</a> · <a href="{% url 'menu' %}">Menu</a> · <a href="{% url 'cart' %}">Cart</a>
+            </div>
+            <div class="col-md-4">
+                <h6>Contact</h6>
+                <p class="small">+880 1234-567890<br>hello@foodiehub.com</p>
+            </div>
+        </div>
+        <hr class="border-secondary">
+        <p class="text-center text-muted small mb-0">© 2026 FoodieHub — Django Project.</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
