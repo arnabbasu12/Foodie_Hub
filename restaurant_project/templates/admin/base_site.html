@@ -1,9 +1,0 @@
-{% extends "admin/base.html" %}
-{% load static %}
-{% block extrastyle %}
-{{ block.super }}
-<link rel="stylesheet" href="{% static 'css/admin_custom.css' %}">
-{% endblock %}
-{% block branding %}
-<h1 id="site-name"><a href="{% url 'admin:index' %}">🍽️ FoodieHub Administration</a></h1>
-{% endblock %}

@@ -1,8 +1,0 @@
-#header{background:#0b1220}
-#branding h1,#branding h1 a:link,#branding h1 a:visited{color:#fff}
-.module h2,.module caption{background:#111827}
-.button,input[type=submit],input[type=button],.submit-row input,a.button{border-radius:8px}
-.object-tools a{border-radius:8px}
-#content-main .object-tools a{background:#111827}
-#content-main .object-tools a:hover{background:#f59e0b;color:#111827}
-select, input[type=text], input[type=number], input[type=email], textarea{border-radius:7px}
