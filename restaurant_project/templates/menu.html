@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}FoodieHub | Menu{% endblock %}
+{% block content %}
+<section class="page-header">
+  <div class="container py-5">
+    <span class="section-kicker">FOODIEHUB</span>
+    <h1 class="fw-bold">Our Menu</h1>
+    <p class="text-muted">Find your next favorite meal — results update as you type.</p>
+  </div>
+</section>
+<div class="container py-4">
+  <form method="get" action="{% url 'menu' %}" class="row g-2 mb-3" id="menu-search-form" role="search">
+    <div class="col-md-7">
+      <label class="visually-hidden" for="food-search">Search food</label>
+      <div class="input-group input-group-lg">
+        <span class="input-group-text" aria-hidden="true">⌕</span>
+        <input id="food-search" name="q" value="{{ query }}" class="form-control" placeholder="Search by food name or description..." autocomplete="off" aria-describedby="search-help">
+        {% if query %}<a class="btn btn-outline-secondary d-flex align-items-center" href="{% url 'menu' %}{% if selected_category %}?category={{ selected_category|urlencode }}{% endif %}" aria-label="Clear search">Clear</a>{% endif %}
+      </div>
+      <small id="search-help" class="text-muted">Start typing to filter instantly — no button needed.</small>
+      <span id="search-status" class="small text-muted" role="status" aria-live="polite"></span>
+    </div>
+    <div class="col-md-3">
+      <label class="visually-hidden" for="food-category">Category</label>
+      <select id="food-category" name="category" class="form-select form-select-lg">
+        <option value="">All Categories</option>
+        {% for cat in categories %}<option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2"><button type="submit" class="btn btn-dark btn-lg w-100 clear-btn">Search</button></div>
+  </form>
+
+  <div id="menu-toolbar" class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4" aria-live="polite" aria-atomic="true">
+    <p class="text-muted mb-0" id="menu-result-count">{% if foods|length == 1 %}1 item{% else %}{{ foods|length }} items{% endif %}{% if query %} matching “{{ query }}”{% endif %}{% if selected_category %} in {{ selected_category }}{% endif %}</p>
+    {% if query or selected_category %}<a class="small text-decoration-none" href="{% url 'menu' %}">Reset all filters</a>{% endif %}
+  </div>
+
+  {% if query or selected_category %}{% if not foods %}
+    <div id="menu-empty-state" class="alert alert-warning text-center py-4"><div class="fs-2 mb-2">🔎</div><h5 class="fw-bold">Food Not Found</h5><p class="mb-0">Try another keyword or choose a different category.</p></div>
+  {% endif %}{% endif %}
+  {% if not query and not selected_category %}<div id="menu-empty-state" hidden></div>{% endif %}
+
+  <div class="row g-4" id="food-results">
+    {% for food in foods %}
+      <div class="col-sm-6 col-lg-4 col-xl-3">
+        <div class="food-card h-100">
+          <a href="{% url 'food_detail' food.pk %}" class="food-photo-wrap" aria-label="View {{ food.name }}">
+            {% if food.image_url %}<img src="{{ food.image_url }}" class="food-photo" alt="{{ food.name }}" loading="lazy">{% else %}<div class="food-photo-fallback">{{ food.emoji }}</div>{% endif %}
+          </a>
+          <div class="p-3">
+            <div class="d-flex justify-content-between align-items-start gap-2"><div><span class="category-pill">{{ food.category }}</span><h5 class="fw-bold mt-2 mb-1">{{ food.name }}</h5></div><span class="price-tag">৳{{ food.price|floatformat:0 }}</span></div>
+            <p class="text-muted small mb-3">{{ food.description|truncatechars:68 }}</p>
+            <div class="d-flex gap-2"><a href="{% url 'food_detail' food.pk %}" class="btn btn-view flex-grow-1">View details</a>{% if user.is_authenticated %}<a href="{% url 'add_to_cart' food.pk %}?next=menu" class="btn btn-add" data-add-to-cart aria-label="Add {{ food.name }} to cart"><i class="bi bi-plus-lg me-1"></i>Add</a>{% else %}<a href="{% url 'login' %}?next={% url 'menu' %}" class="btn btn-login">Login</a>{% endif %}</div>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      {% if not query and not selected_category %}<div class="col-12 text-center py-5"><div class="fs-1 mb-3">🍽️</div><h4>Our menu is getting ready</h4><p class="text-muted">Please check back soon.</p></div>{% endif %}
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{{ food.name }} | FoodieHub{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <a href="{% url 'menu' %}" class="back-link text-decoration-none"><i class="bi bi-arrow-left"></i> Back to Menu</a>
+    <div class="row g-5 align-items-center mt-2">
+        <div class="col-lg-6">
+            <div class="detail-photo-card">
+                {% if food.image_url %}
+                <img src="{{ food.image_url }}" class="detail-photo" alt="{{ food.name }}" loading="lazy">
+                {% else %}
+                <div class="detail-fallback">{{ food.emoji }}</div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <span class="badge bg-warning text-dark">{{ food.category }}</span>
+            <h1 class="display-5 fw-bold mt-3">{{ food.name }}</h1>
+            <p class="text-muted lead">{{ food.description }}</p>
+            <div class="price display-6 fw-bold mb-4">৳{{ food.price|floatformat:0 }}</div>
+            {% if user.is_authenticated %}
+                <a href="{% url 'add_to_cart' food.pk %}?next={% url 'food_detail' food.pk %}" class="btn btn-add btn-lg rounded-pill px-4"><i class="bi bi-cart-plus"></i> Add to Cart</a>
+            {% else %}
+                <a href="{% url 'login' %}?next={% url 'food_detail' food.pk %}" class="btn btn-view btn-lg rounded-pill px-4">Login to Order</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
